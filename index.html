@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Bus Hurtigmeny</title>
+  <link rel="apple-touch-icon" href="logo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f6f8f5;
+      padding: 20px;
+      color: #002b30;
+      text-align: center;
+    }
+    .logo {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    .main-button {
+      background-color: #f9f871;
+      border: 2px solid #000;
+      padding: 14px;
+      font-size: 18px;
+      width: 100%;
+      max-width: 300px;
+      margin: 10px auto;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sub-button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 280px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .submenu {
+      display: none;
+      margin: 10px auto 20px;
+      padding: 10px;
+      background-color: #e6f0ff;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      max-width: 300px;
+    }
+    .submenu.visible {
+      display: block;
+    }
+    .status {
+      float: right;
+      font-weight: normal;
+    }
+    .green-dot::before {
+      content: '● ';
+      color: green;
+    }
+    .red-dot::before {
+      content: '● ';
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <img src="logo.png" alt="Connect Bus" class="logo">
+  <h1>Connect Bus Hurtigmeny</h1>
+
+  <button class="main-button" onclick="toggleMenu('telefon')">📞 Telefon <span>▼</span></button>
+  <div class="submenu" id="telefon">
+    <button class="sub-button" onclick="call('99206840')">Driftsentral <span class="status green-dot">Tilgjengelig</span></button>
+    <button class="sub-button" id="pikettStatus" onclick="call('90225531')">Pikett <span class="status" id="pikettDot"></span></button>
+    <button class="sub-button" onclick="call('93094705')">Bemanning</button>
+    <button class="sub-button" onclick="call('46433467')">Personalleder</button>
+    <button class="sub-button" onclick="call('45261405')">Driftsleder</button>
+    <button class="sub-button" onclick="call('90252721')">Nuh Samatar</button>
+  </div>
+
+  <button class="main-button" onclick="toggleMenu('ansatt')">🧑‍💼 Ansattportal <span>▼</span></button>
+  <div class="submenu" id="ansatt">
+    <button class="sub-button" onclick="window.open('https://nb.ivu-cloud.com/ruter/mbweb/main/matter/desktop/main-menu', '_blank')">IVU</button>
+    <button class="sub-button" onclick="window.open('https://maintenance.tenix.eu/login', '_blank')">Tenix</button>
+  </div>
+    
+  </div>
+
+  <button class="main-button" onclick="toggleMenu('nodetatene')">🚨 Nødetatene <span>▼</span></button>
+  <div class="submenu" id="nodetatene">
+    <button class="sub-button" onclick="call('112')">Politi</button>
+    <button class="sub-button" onclick="call('113')">Ambulanse</button>
+    <button class="sub-button" onclick="call('110')">Brannvesen</button>
+  </div>
+
+  <button class="main-button" onclick="toggleMenu('toalett')">🚻 Toalettkoder <span>▼</span></button>
+  <div class="submenu" id="toalett">
+    <p><strong>Lillestrøm:</strong> <span contenteditable="true" oninput="saveCode(this, 'Lillestrøm')">4373</span></p>
+    <p><strong>Grorud pauserom:</strong> <span contenteditable="true" oninput="saveCode(this, this.parentElement.querySelector('strong').innerText.replace(':', ''))">$1</span></p>
+    <p><strong>Stovner:</strong> <span contenteditable="true">4003#</span></p>
+    <p><strong>Oslo BT offentlig:</strong> <span contenteditable="true">4136</span></p>
+    <p><strong>Oslo BT brakka:</strong> <span contenteditable="true">3970</span></p>
+    <p><strong>Hellerud/Kongskog:</strong> <span contenteditable="true">0709#</span></p>
+    <p><strong>Fjerdingby:</strong> <span contenteditable="true">1256#</span></p>
+    <p><strong>Slattum:</strong> <span contenteditable="true">390</span></p>
+    <p><strong>Etterstad:</strong> <span contenteditable="true">2300#</span></p>
+    <p><strong>Skedsmokorset:</strong> <span contenteditable="true">1256#</span></p>
+    <p><strong>Økern:</strong> <span contenteditable="true">3344#</span></p>
+    <p><strong>Ellingsrud T-bane:</strong> <span contenteditable="true">Eget kort + 2288</span></p>
+    <p style="font-size: 12px; margin-top: 10px; color: #444;">* Koder kan endres. Klikk på en kode for å redigere.</p>
+  </div>
+
+  <button class="main-button" onclick="toggleMenu('location')">📍 Hvor er jeg? <span>▼</span></button>
+  <div class="submenu" id="location">
+    <p>Din nåværende posisjon:</p>
+    <p id="addressText" style="font-size: 18px; font-weight: bold; color: #002b30;">Klikk for å hente adresse...</p>
+    <button class="sub-button" onclick="getLocation()">Hent min adresse</button>
+  </div>
+
+  <button class="main-button" onclick="toggleMenu('del')">🔗 DEL <span>▼</span></button>
+  <div class="submenu" id="del">
+    <p>Skann QR-koden med kameraet for å åpne denne menyen:</p>
+    <img src="qr.png" alt="QR Code" style="width: 160px;">
+    <p style="font-size: 13px; color: #444; margin-top: 10px;">📲 For å bruke denne siden som en app, trykk på <strong>Del</strong> og velg <strong>Legg til på Hjem-skjermen</strong> fra menyen.</p>
+  </div>
+
+  <script>
+    function toggleMenu(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle("visible");
+    }
+
+    function getLocation() {
+      const addressText = document.getElementById('addressText');
+      addressText.textContent = 'Henter posisjon...';
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+              if (data && data.display_name) {
+                addressText.textContent = data.display_name;
+              } else {
+                addressText.textContent = 'Fant ikke adressen.';
+              }
+            })
+            .catch(() => {
+              addressText.textContent = 'Klarte ikke å hente adresse.';
+            });
+        }, () => {
+          addressText.textContent = 'Posisjonstjeneste er deaktivert eller nektet.';
+        });
+      } else {
+        addressText.textContent = 'Nettleseren støtter ikke posisjon.';
+      }
+    }
+      function updatePikettStatus() {
+      const now = new Date();
+      const hours = now.getHours();
+      const pikettDot = document.getElementById('pikettDot');
+      const pikettStatus = document.getElementById('pikettStatus');
+      if (hours >= 4 && hours < 21) {
+        pikettDot.className = 'status green-dot';
+        pikettDot.textContent = 'Tilgjengelig';
+      } else {
+        pikettDot.className = 'status red-dot';
+        pikettDot.textContent = 'Utilgjengelig';
+      }
+    }
+
+    updatePikettStatus();
+    setInterval(updatePikettStatus, 60000);
+
+    function call(number) {
+      window.location.href = 'tel:' + number;
+    }
+  function saveCode(element, key) {
+  localStorage.setItem('toalett_' + key, element.innerText);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#toalett span[contenteditable=true]').forEach(el => {
+    const key = el.previousSibling.textContent.trim().slice(0, -1);
+    const saved = localStorage.getItem('toalett_' + key);
+    if (saved) el.innerText = saved;
+  });
+});
+</script>
+</body>
+</html>
