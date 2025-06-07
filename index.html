@@ -22,8 +22,8 @@
       margin-bottom: 20px;
     }
     .main-button {
-      background-color: #f9f871;
-      border: 2px solid #000;
+      background-color: #032c32;
+      border: 2px solid #032c32;
       padding: 14px;
       font-size: 18px;
       width: 100%;
@@ -31,6 +31,7 @@
       margin: 10px auto;
       border-radius: 8px;
       font-weight: bold;
+      color: white;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
@@ -42,7 +43,8 @@
       border: none;
       padding: 10px;
       margin: 5px 0;
-      border-radius: 6px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       width: 100%;
       max-width: 280px;
       font-size: 16px;
@@ -93,8 +95,6 @@
     <button class="sub-button" onclick="window.open('https://nb.ivu-cloud.com/ruter/mbweb/main/matter/desktop/main-menu', '_blank')">IVU</button>
     <button class="sub-button" onclick="window.open('https://maintenance.tenix.eu/login', '_blank')">Tenix</button>
   </div>
-    
-  </div>
 
   <button class="main-button" onclick="toggleMenu('nodetatene')">🚨 Nødetatene <span>▼</span></button>
   <div class="submenu" id="nodetatene">
@@ -105,26 +105,24 @@
 
   <button class="main-button" onclick="toggleMenu('toalett')">🚻 Toalettkoder <span>▼</span></button>
   <div class="submenu" id="toalett">
-    <p><strong>Lillestrøm:</strong> <span contenteditable="true" oninput="saveCode(this, 'Lillestrøm')">4373</span></p>
-    <p><strong>Grorud pauserom:</strong> <span contenteditable="true" oninput="saveCode(this, this.parentElement.querySelector('strong').innerText.replace(':', ''))">$1</span></p>
-    <p><strong>Stovner:</strong> <span contenteditable="true">4003#</span></p>
-    <p><strong>Oslo BT offentlig:</strong> <span contenteditable="true">4136</span></p>
-    <p><strong>Oslo BT brakka:</strong> <span contenteditable="true">3970</span></p>
-    <p><strong>Hellerud/Kongskog:</strong> <span contenteditable="true">0709#</span></p>
-    <p><strong>Fjerdingby:</strong> <span contenteditable="true">1256#</span></p>
-    <p><strong>Slattum:</strong> <span contenteditable="true">390</span></p>
-    <p><strong>Etterstad:</strong> <span contenteditable="true">2300#</span></p>
-    <p><strong>Skedsmokorset:</strong> <span contenteditable="true">1256#</span></p>
-    <p><strong>Økern:</strong> <span contenteditable="true">3344#</span></p>
-    <p><strong>Ellingsrud T-bane:</strong> <span contenteditable="true">Eget kort + 2288</span></p>
-    <p style="font-size: 12px; margin-top: 10px; color: #444;">* Koder kan endres. Klikk på en kode for å redigere.</p>
+    <button class="sub-button" disabled>Lillestrøm: 4373</button>
+    <button class="sub-button" disabled>Grorud pauserom: 3311#</button>
+    <button class="sub-button" disabled>Stovner: 4003#</button>
+    <button class="sub-button" disabled>Oslo BT offentlig: 4136</button>
+    <button class="sub-button" disabled>Oslo BT brakka: 3970</button>
+    <button class="sub-button" disabled>Hellerud/Kongskog: 0709#</button>
+    <button class="sub-button" disabled>Fjerdingby: 1256#</button>
+    <button class="sub-button" disabled>Slattum: 390</button>
+    <button class="sub-button" disabled>Etterstad: 2300#</button>
+    <button class="sub-button" disabled>Skedsmokorset: 1256#</button>
+    <button class="sub-button" disabled>Økern: 3344#</button>
+    <button class="sub-button" disabled>Ellingsrud T-bane: Eget kort + 2288</button>
   </div>
 
-  <button class="main-button" onclick="toggleMenu('location')">📍 Hvor er jeg? <span>▼</span></button>
-  <div class="submenu" id="location">
-    <p>Din nåværende posisjon:</p>
-    <p id="addressText" style="font-size: 18px; font-weight: bold; color: #002b30;">Klikk for å hente adresse...</p>
-    <button class="sub-button" onclick="getLocation()">Hent min adresse</button>
+  <button class="main-button" onclick="toggleMenu('epost')">✉️ EPOST <span>▼</span></button>
+  <div class="submenu" id="epost">
+    <button class="sub-button" onclick="window.location.href='mailto:bml_ds@connectbus.no'">Bemanning</button>
+    <button class="sub-button" onclick="window.location.href='mailto:kjell.vidar.hasselgren@connectbus.no'">Kjell Vidar Hasselgren</button>
   </div>
 
   <button class="main-button" onclick="toggleMenu('del')">🔗 DEL <span>▼</span></button>
@@ -142,6 +140,7 @@
 
     function getLocation() {
       const addressText = document.getElementById('addressText');
+      if (!addressText) return;
       addressText.textContent = 'Henter posisjon...';
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(position => {
@@ -150,11 +149,7 @@
           fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
             .then(response => response.json())
             .then(data => {
-              if (data && data.display_name) {
-                addressText.textContent = data.display_name;
-              } else {
-                addressText.textContent = 'Fant ikke adressen.';
-              }
+              addressText.textContent = data?.display_name || 'Fant ikke adressen.';
             })
             .catch(() => {
               addressText.textContent = 'Klarte ikke å hente adresse.';
@@ -166,11 +161,12 @@
         addressText.textContent = 'Nettleseren støtter ikke posisjon.';
       }
     }
-      function updatePikettStatus() {
+
+    function updatePikettStatus() {
+      const pikettDot = document.getElementById('pikettDot');
+      if (!pikettDot) return;
       const now = new Date();
       const hours = now.getHours();
-      const pikettDot = document.getElementById('pikettDot');
-      const pikettStatus = document.getElementById('pikettStatus');
       if (hours >= 4 && hours < 21) {
         pikettDot.className = 'status green-dot';
         pikettDot.textContent = 'Tilgjengelig';
@@ -186,17 +182,6 @@
     function call(number) {
       window.location.href = 'tel:' + number;
     }
-  function saveCode(element, key) {
-  localStorage.setItem('toalett_' + key, element.innerText);
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('#toalett span[contenteditable=true]').forEach(el => {
-    const key = el.previousSibling.textContent.trim().slice(0, -1);
-    const saved = localStorage.getItem('toalett_' + key);
-    if (saved) el.innerText = saved;
-  });
-});
-</script>
+  </script>
 </body>
 </html>
